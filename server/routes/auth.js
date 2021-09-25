@@ -110,6 +110,15 @@ router.get('/getData',authenticate,(req,res)=>
 res.send(req.rootUser);
 });
 
+router.get('/logout',(req,res)=>
+{
+  
+  res.clearCookie("token",{path : '/'});
+  
+  res.status(200).send("Logout Successful");
+
+});
+
 
 router.post('/updateCard',authenticate,async(req,res)=>
 {

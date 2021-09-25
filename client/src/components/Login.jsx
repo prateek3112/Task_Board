@@ -22,6 +22,7 @@ const Login = () => {
   };
 
   const loginUser = async (e)=>{
+    
 e.preventDefault();
 const {email , password} = currentUser;
 
@@ -55,6 +56,8 @@ if(res.status === 422 || !res || res.status === 404 ||  res.status === 500){
 	  })
 }
 else if(res.status === 200 || res.status === 201){
+  localStorage.setItem('User',"loggedIn");
+  
 	const Toast = Swal.mixin({
 		toast: true,
 		position: 'top-end',
@@ -72,6 +75,7 @@ else if(res.status === 200 || res.status === 201){
 		title: data.message
 	  })
 	  history.push('/home');
+    window.location.reload(true);
 }
   }
   return (

@@ -1,6 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import AsyncBoard from "react-trello";
+import Board from "react-trello";
 import { useHistory } from "react-router-dom";
 import { Modal, Button, Form } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.css";
@@ -11,13 +11,15 @@ const Home = () => {
   const [cards, setCards] = useState([]);
   const [card, setcard] = useState();
 
-  const handleClose = () => setShow(false);
+  const handleClose = () => {
+    getCards();
+    setShow(false);
+  }
 
   let Lane1 = cards.filter((card) => card.laneId === 1);
   let Lane2 = cards.filter((card) => card.laneId === 2);
   let Lane3 = cards.filter((card) => card.laneId === 3);
-  console.log(Lane1);
-  console.log(cards);
+  
   const history = useHistory();
   const data = {
     lanes: [
@@ -41,6 +43,8 @@ const Home = () => {
       },
     ],
   };
+ 
+
 
   const checkValidity = async () => {
     try {
@@ -96,15 +100,10 @@ const Home = () => {
     checkValidity();
   }, []);
 
-  useEffect(() => {
-    getCards();
-
-    console.log(cards);
-  }, [card,show]);
+ 
 
   const AddCard = async (card, laneId) => {
-    console.log(card);
-    console.log(laneId);
+    
 
     const res = await fetch("/addCard", {
       method: "POST",
@@ -116,6 +115,9 @@ const Home = () => {
 
     const data = await res.json();
     console.log(data);
+
+   getCards();
+    
   };
   const onLaneChange = async (fromLaneId, toLaneId, cardId, index) => {
     console.log("from:", fromLaneId);
@@ -130,15 +132,24 @@ const Home = () => {
     });
 
     const data = await res.json();
-    console.log(data);
+    getCards();
   };
 
   const cardClick = (cardId, metadata, laneId) => {
-    
-    const card = cards.filter((c) => c.id === cardId);
-    setcard(card[0]);
+    debugger;
+    getCards();
+    if(cards){
+      const card = cards.filter((c) => c.id === cardId);
+    if(card[0]!==null){
+      
+      setcard(card[0]);
     console.log(card[0].title);
     setShow(true);
+    
+    }
+
+    }
+    getCards();
   };
 
 
@@ -153,14 +164,22 @@ const Home = () => {
   });
 
   const data = await res.json();
-  console.log(data);
+  
+  getCards();
 
  }
+
+ useEffect(() => {
+
+  getCards();
+
+  
+}, []);
  
  return (
     <div>
       
-      <AsyncBoard
+      <Board
         data={data}
         onCardClick={(cardId, metadata, laneId) => {
           cardClick(cardId, metadata, laneId);
